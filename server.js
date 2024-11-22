@@ -14,18 +14,6 @@ app.get("/addTwoNumber", (req,res)=>{
     const result = addTwoNumber(n1,n2);
     res.json({statuscocde:200, data: result }); 
 });
-/POST method
-app.post("/addTwoNumber", (req, res) => {
-    const { n1, n2 } = req.body;
- 
-    // Validate the input
-    if (typeof n1 !== 'number' || typeof n2 !== 'number') {
-        return res.json({ statusCode: 400, message: "Invalid input. Please provide two numbers in the request body." });
-    }
- 
-    const result = addTwoNumber(n1, n2);
-    res.json({ statusCode: 200, data: result });
-});
 
 app.listen(port,()=>{
 console.log("App listening to: "+port)
