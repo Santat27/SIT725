@@ -1,20 +1,30 @@
-var express = require("express")
-var app = express()
-app.use(express.static(__dirname+'/public'))
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-var port = process.env.port || 3000;
-const addTwoNumber= (n1,n2) => {
-    return n1+n2;
-}
+let express = require('express');
+let app = express();
+let port = process.env.port || 3000;
+require('./dbConnection');
+let router = require('./routers/router');
+const { Socket } = require('socket.io');
+let http = require('http').createServer(app);
+let io = require('socket.io')(http);
 
-app.get("/addTwoNumber", (req,res)=>{
-    const n1= parseInt(req.query.n1);
-    const n2=parseInt(req.query.n2);
-    const result = addTwoNumber(n1,n2);
-    res.json({statuscocde:200, data: result }); 
+app.use(express.static(__dirname + '/'));
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+app.use('/api/cat',router);
+
+io.on('connection',(socket)=>{
+    console.log('user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+
+    setInterval(()=>{
+        x=parseInt(Math.random()*10);
+        socket.emit('number', x);
+        console.log('Random Number '+x);
+    }, 1000)
 });
 
-app.listen(port,()=>{
-console.log("App listening to: "+port)
-})
+http.listen(port, ()=>{
+    console.log('express server started');
+});
